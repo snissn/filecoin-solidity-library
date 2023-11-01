@@ -54,6 +54,24 @@ contract TypeConstructorTest is Test {
 
         cidBytesDecoded = TypeConstructor.cidFromString(cid);
         assertEq(cidBytesDecoded.data, cidBytes);
+
+        cid = "QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D";
+        cidBytes = hex"1220422896A1CE82A7B1CC0BA27C7D8DE2886C7DF95588473D5E88A28A9FCFA0E43E";
+
+        cidBytesDecoded = TypeConstructor.cidFromString(cid);
+        assertEq(cidBytesDecoded.data, cidBytes);
+
+        cid = "QmWXShtJXt6Mw3FH7hVCQvR56xPcaEtSj4YFSGjp2QxA4v";
+        cidBytes = hex"122079A14FC1F2389F08E72F8E897F1BFEDBCB9A0659A1BCEAAF7F6E10B39DF44F8F";
+
+        cidBytesDecoded = TypeConstructor.cidFromString(cid);
+        assertEq(cidBytesDecoded.data, cidBytes);
+
+        cid = "QmeQtZfwuq6aWRarY9P3L9MWhZ6QTonDe9ahWECGBZjyEJ";
+        cidBytes = hex"1220EED0FABF56CC4483BD066183A55EDC7817D3549C394C1967521B35AAC9D51FF3";
+
+        cidBytesDecoded = TypeConstructor.cidFromString(cid);
+        assertEq(cidBytesDecoded.data, cidBytes);
     }
 
     function test_cidFromStringV0WhenFirstCharIsInvalid() external {
@@ -137,20 +155,6 @@ contract TypeConstructorTest is Test {
 
         vm.expectRevert(InvalidLength.selector);
         TypeConstructor.dealLabelFromBytes(data);
-    }
-
-    // TODO: fix this test if possible, make it only use valid characters
-    function testFuzz_cidFromStringV0(string memory chars) external {
-        vm.assume(bytes(chars).length == 44);
-
-        string memory cid = string.concat("Qm", chars);
-        bytes memory cidBytes = TypeConstructor.cidFromString(cid).data;
-
-        bytes2 prefix;
-        assembly {
-            prefix := shl(240, mload(add(cidBytes, 0x20)))
-        }
-        assertEq(prefix, hex"1220");
     }
 
     function testFuzz_cidFromStringV0WhenFirstCharIsInvalid(bytes1 firstChar, string memory chars) external {

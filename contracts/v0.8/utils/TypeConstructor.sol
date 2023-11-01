@@ -61,7 +61,7 @@ library TypeConstructor {
         }
         
         unchecked {
-            result1 = 58 * (58 * uint256(decodeBase58Char(dataBytes[43])) + uint256(decodeBase58Char(dataBytes[44])))
+            result1 = 58 * (58 * uint256(decodeBase58Char(dataBytes[43])) + decodeBase58Char(dataBytes[44]))
                 + decodeBase58Char(dataBytes[45]);
         }
 
