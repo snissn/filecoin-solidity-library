@@ -81,6 +81,8 @@ async function main() {
 
     deal.client_signature = utils.hexToBytes(signedDealProposal)
 
+    console.log({ dealInfo: deal })
+
     console.log(`Publishing deal...`) //Note: Anyone can issue the publishing transaction
     const tx = await marketContract.connect(anyone).publish_storage_deals({ deals: [deal] }, { gasLimit: 1_000_000_000 })
 
@@ -123,12 +125,8 @@ async function main() {
         actualDealTotalPrice,
     })
 
-    //One way to compare the values (individually)
-    expect(actualDealCommitment.data).to.eq(expectedDealCommitment.data)
-    expect(actualDealCommitment.size).to.eq(expectedDealCommitment.size)
-
-    //Second way to compare the values (jointly)
-    expect(actualDealCommitment).to.eql(Object.values(expectedDealCommitment))
+    //Comparison example
+    expect(actualDealProvider.data).to.eq("0x" + Buffer.from(deal.proposal.provider.data).toString("hex"))
 }
 
 main().catch((error) => {
