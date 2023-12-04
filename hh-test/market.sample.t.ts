@@ -1,14 +1,17 @@
-import { ethers } from "hardhat"
+import { ethers, network } from "hardhat"
 import { expect, util } from "chai"
 
 import * as utils from "./utils"
 
 import { MarketApiTest, MarketHelper } from "../typechain-types"
-import { MarketTypes, CommonTypes } from "../typechain-types/tests/market.test.sol/MarketApiTest"
+import { MarketTypes, CommonTypes } from "../typechain-types/contracts/v0.8/tests/market.test.sol/MarketApiTest"
+import { Contract } from "typechain"
 
 async function main() {
+    const provider = new ethers.providers.JsonRpcProvider((network.config as any).url)
+
     console.log(`Generating accounts...`)
-    const [deployer, anyone] = [ethers.Wallet.createRandom(ethers.provider), ethers.Wallet.createRandom(ethers.provider)]
+    const [deployer, anyone] = [ethers.Wallet.createRandom().connect(provider), ethers.Wallet.createRandom(ethers.provider).connect(provider)]
     const clientFilAddress = utils.lotus.createWalletBLS()
     const providerFilAddress = "t01000" //default - created by lotus-miner
 
@@ -29,19 +32,19 @@ async function main() {
     console.log(`DEBUG: clientIdAddress: ${utils.lotus.findIDAddressToBytes(clientFilAddress)}`)
 
     console.log(`Deploying contracts... (market and helper)`)
-    const MarketContractFactory = await ethers.getContractFactory("MarketApiTest")
-    const marketContract: MarketApiTest = (await MarketContractFactory.connect(deployer).deploy({ gasLimit: 1_000_000_000 })).connect(deployer)
+    const MarketContractFactory = await ethers.getContractFactory("MarketApiTest", deployer)
+    const marketContract: MarketApiTest & Contract = await MarketContractFactory.connect(deployer).deploy()
 
-    const HelperContractFactory = await ethers.getContractFactory("MarketHelper")
-    const helperContract: MarketHelper = await HelperContractFactory.connect(deployer).deploy({ gasLimit: 1_000_000_000 })
+    const HelperContractFactory = await ethers.getContractFactory("MarketHelper", deployer)
+    const helperContract: MarketHelper = await HelperContractFactory.connect(deployer).deploy()
 
-    await marketContract.waitForDeployment()
-    await helperContract.waitForDeployment()
+    await marketContract.deployed()
+    await helperContract.deployed()
 
-    const marketContractEthAddress = await marketContract.getAddress()
+    const marketContractEthAddress = marketContract.address
     const marketContractFilAddress = utils.ethAddressToFilAddress(marketContractEthAddress)
 
-    const helperContractEthAddress = await helperContract.getAddress()
+    const helperContractEthAddress = helperContract.address
     const helperContractFilAddress = utils.ethAddressToFilAddress(helperContractEthAddress)
 
     console.log(`Contracts deployed:`)
@@ -86,11 +89,13 @@ async function main() {
     //Introduce artificial delay due to Filecoin's delayed execution model
     await utils.delay(50000)
 
+    console.log(`Deal published!`)
+
     //Asertions
 
     //Expected values
     const expectedDealCommitment: MarketTypes.GetDealDataCommitmentReturnStruct = {
-        data: ethers.hexlify(Uint8Array.from([0, ...Array.from(ethers.getBytes(deal.proposal.piece_cid.data))])),
+        data: ethers.utils.hexlify(Uint8Array.from([0, ...ethers.utils.arrayify(deal.proposal.piece_cid.data)])),
         size: deal.proposal.piece_size,
     }
 
