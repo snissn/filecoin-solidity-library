@@ -3,7 +3,6 @@ pragma solidity ^0.8.17;
 
 import {Test} from "forge-std/Test.sol";
 import {FilAddresses} from "contracts/v0.8/utils/FilAddresses.sol";
-import {FilAddressIdConverter} from "contracts/v0.8/utils/FilAddressIdConverter.sol";
 import {CommonTypes} from "contracts/v0.8/types/CommonTypes.sol";
 
 contract FilAddressesTest is Test {
@@ -24,24 +23,21 @@ contract FilAddressesTest is Test {
     }
 
     function test_toEthAddressInvalidFirstByte() external {
-        CommonTypes.FilAddress memory invalidFilAddress =
-            CommonTypes.FilAddress(abi.encodePacked(hex"000a", testAddress));
+        CommonTypes.FilAddress memory invalidFilAddress = CommonTypes.FilAddress(abi.encodePacked(hex"000a", testAddress));
 
         vm.expectRevert(InvalidAddress.selector);
         FilAddresses.toEthAddress(invalidFilAddress);
     }
 
     function test_toEthAddressInvalidSecondByte() external {
-        CommonTypes.FilAddress memory invalidFilAddress =
-            CommonTypes.FilAddress(abi.encodePacked(hex"0400", testAddress));
+        CommonTypes.FilAddress memory invalidFilAddress = CommonTypes.FilAddress(abi.encodePacked(hex"0400", testAddress));
 
         vm.expectRevert(InvalidAddress.selector);
         FilAddresses.toEthAddress(invalidFilAddress);
     }
 
     function test_toEthAddressInvalidLength() external {
-        CommonTypes.FilAddress memory invalidFilAddress =
-            CommonTypes.FilAddress(abi.encodePacked(hex"040a", testAddress, hex"00"));
+        CommonTypes.FilAddress memory invalidFilAddress = CommonTypes.FilAddress(abi.encodePacked(hex"040a", testAddress, hex"00"));
 
         vm.expectRevert(InvalidAddress.selector);
         FilAddresses.toEthAddress(invalidFilAddress);
@@ -68,15 +64,8 @@ contract FilAddressesTest is Test {
         result = FilAddresses.fromBytes(hex"02e54dea4f9bc5b47d261819826d5e1fbf8bc5503b");
         assertEq(keccak256(result.data), keccak256(hex"02e54dea4f9bc5b47d261819826d5e1fbf8bc5503b"));
 
-        result = FilAddresses.fromBytes(
-            hex"03ad58df696e2d4e91ea86c881e938ba4ea81b395e12797b84b9cf314b9546705e839c7a99d606b247ddb4f9ac7a3414dd"
-        );
-        assertEq(
-            keccak256(result.data),
-            keccak256(
-                hex"03ad58df696e2d4e91ea86c881e938ba4ea81b395e12797b84b9cf314b9546705e839c7a99d606b247ddb4f9ac7a3414dd"
-            )
-        );
+        result = FilAddresses.fromBytes(hex"03ad58df696e2d4e91ea86c881e938ba4ea81b395e12797b84b9cf314b9546705e839c7a99d606b247ddb4f9ac7a3414dd");
+        assertEq(keccak256(result.data), keccak256(hex"03ad58df696e2d4e91ea86c881e938ba4ea81b395e12797b84b9cf314b9546705e839c7a99d606b247ddb4f9ac7a3414dd"));
 
         result = FilAddresses.fromBytes(hex"040a71C7656EC7ab88b098defB751B7401B5f6d8976F");
         assertEq(keccak256(result.data), keccak256(hex"040a71C7656EC7ab88b098defB751B7401B5f6d8976F"));
