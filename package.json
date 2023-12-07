@@ -1,5 +1,5 @@
 {
-    "name": "@filecoin-project/filecoin-solidity",
+    "name": "@bojinovic/test-package",
     "version": "1.0.0",
     "description": "Filecoin EVM Solidity APIs",
     "main": "",
@@ -11,7 +11,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/filecoin-project/filecoin-solidity.git"
+        "url": "git+https://github.com/bojinovic/test-package.git"
     },
     "keywords": [
         "FEVM",
@@ -22,9 +22,9 @@
     "author": "[Protocol Labs, Filecoin Core Devs]",
     "license": "MIT OR Apache-2.0",
     "bugs": {
-        "url": "https://github.com/filecoin-project/filecoin-solidity/issues"
+        "url": "https://github.com/bojinovic/test-package/issues"
     },
-    "homepage": "https://github.com/filecoin-project/filecoin-solidity#readme",
+    "homepage": "https://github.com/bojinovic/test-package#readme",
     "files": [
         "contracts/",
         "!/contracts/v0.8/tests/**/*"
