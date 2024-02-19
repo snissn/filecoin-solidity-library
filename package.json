@@ -26,7 +26,10 @@
     },
     "homepage": "https://github.com/filecoin-project/filecoin-solidity#readme",
     "files": [
-        "contracts"
+        "contracts/v0.8/*.sol",
+        "contracts/v0.8/utils/*.sol",
+        "contracts/v0.8/types/*.sol",
+        "contracts/v0.8/cbor/*.sol"
     ],
     "publishConfig": {
         "access": "public"
