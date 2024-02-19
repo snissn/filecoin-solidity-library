@@ -62,6 +62,7 @@
     },
     "dependencies": {
         "solidity-cborutils": "^2.0.0",
-        "openzeppelin/contracts-upgradeable": "5.0.1"
+        "openzeppelin/contracts-upgradeable": "5.0.1",
+        "@ensdomains/buffer": "0.1.1"
     }
 }
