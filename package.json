@@ -30,7 +30,7 @@
         "contracts/v0.8/utils/*.sol",
         "contracts/v0.8/types/*.sol",
         "contracts/v0.8/cbor/*.sol",
-        "lib"
+        "lib/solidity-cborutils"
     ],
     "publishConfig": {
         "access": "public"
