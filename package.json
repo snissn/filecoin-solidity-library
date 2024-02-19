@@ -26,7 +26,7 @@
     },
     "homepage": "https://github.com/filecoin-project/filecoin-solidity#readme",
     "files": [
-        "contracts/",
+        "contracts",
         "!/contracts/v0.8/tests/**/*"
     ],
     "publishConfig": {
