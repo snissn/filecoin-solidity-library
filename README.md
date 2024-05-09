@@ -1,7 +1,7 @@
 # Filecoin Solidity
       
 ---    
-    
+       
 [Protocol Labs](https://protocol.ai/) are now the owners of this library, and will mantain it moving forward.
 
 Originally authored by [Zondax](https://www.zondax.ch).
