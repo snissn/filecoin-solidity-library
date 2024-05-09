@@ -30,6 +30,7 @@ jobs:
               run: |
                   sudo apt-get update
                   sudo apt-get -y install hwloc jq pkg-config bzr ocl-icd-opencl-dev
+                  sudo apt install -y mesa-opencl-icd ocl-icd-opencl-dev ntpdate ubuntu-drivers-common gcc git bzr jq pkg-config curl clang build-essential hwloc libhwloc-dev wget
                   sudo apt install zsh -y
                   make install_solc_linux
                   # yarn install
