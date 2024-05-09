@@ -6,7 +6,7 @@
 
 Originally authored by [Zondax](https://www.zondax.ch).
 
----  
+---   
 
 ## Notice
 
