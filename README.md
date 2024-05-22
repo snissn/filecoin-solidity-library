@@ -12,7 +12,7 @@ Originally authored by [Zondax](https://www.zondax.ch).
 
 This software is dual-licensed under the [MIT License](./LICENSE-MIT) and the [Apache Software License v2](./LICENSE-APACHE) by way of the [Permissive License Stack](https://protocol.ai/blog/announcing-the-permissive-license-stack/). Use of this library implies your acceptance of these terms and conditions.
 
-Things to keep in mind, while using this library:
+Things to keep in mind while using this library:
 
 - There are implicit invariants these contracts expect to hold.
 - You should exhaustively read each contract you plan to use, top to bottom.
