@@ -1,18 +1,19 @@
 name: "Main"
 on:
-    push:
-        branches:
-            - master
     pull_request:
         branches:
             - master
 
 jobs:
-    dep-install:
-        name: "Run dependency install"
+    api-tests:
+        name: "API tests"
         timeout-minutes: 30
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-latest
+        container:
+          image: golang:1.21.7-bullseye
+
         steps:
+
             - name: Install node
               uses: actions/setup-node@v2
               with:
@@ -28,21 +29,14 @@ jobs:
 
             - name: Install other dependencies
               run: |
-                  sudo apt-get update
-                  sudo apt-get -y install hwloc jq pkg-config bzr ocl-icd-opencl-dev
-                  sudo apt install -y mesa-opencl-icd ocl-icd-opencl-dev ntpdate ubuntu-drivers-common gcc git bzr jq pkg-config curl clang build-essential hwloc libhwloc-dev wget
-                  sudo apt install zsh -y
+                  rm /bin/sh && ln -s /bin/bash /bin/sh
+                  cat /etc/os-release
+                  apt-get update
+                  apt-get -y install hwloc jq pkg-config bzr ocl-icd-opencl-dev
+                  apt install zsh -y
                   make install_solc_linux
-                  # yarn install
-                  make install-opencl
-                  sudo echo /usr/lib/aarch64-linux-gnu/libhwloc.so.15 | xargs -I {} sudo ln -s {} /usr/lib/libhwloc.so
-                  sudo ln -s /usr/lib/aarch64-linux-gnu/libOpenCL.so  /usr/lib/libOpenCL.so
-                  sudo ldconfig
-
-              #      echo "--> Finding libhwloc"
-              #   sudo find / -name "libhwloc*"
-              #   echo "--> Finding libOpenCL"
-              #   sudo find / -name "libOpenCL*"
+                  yarn install
+                  ls -1 /usr/lib/*/libhwloc.so.* | head -n 1 | xargs -n1 -I {} ln -s {} /usr/lib/libhwloc.so
 
             - name: Install Rust
               uses: actions-rs/toolchain@v1
@@ -50,43 +44,53 @@ jobs:
                   toolchain: nightly
                   override: true
 
-            - name: Restore crates
-              uses: actions/cache@v3
-              with:
-                  path: |
-                      ~/.cargo/bin/
-                      ~/.cargo/registry/index/
-                      ~/.cargo/registry/cache/
-                      ~/.cargo/git/db/
-                  key: ${{ runner.os }}-cargo-${{ hashFiles('./testing/Cargo.lock') }}
+            - name: Build Contracts
+              run: make build
 
-    # smoke-tests:
-    #     name: "Run smoke tests"
-    #     timeout-minutes: 30
-    #     runs-on: ubuntu-22.04
-    #     needs: [dep-install]
-    #     steps:
-    #         - name: Checkout
-    #           uses: actions/checkout@v2
-    #           with:
-    #               submodules: "true"
-
-    #         - name: Compile contracts
-    #           run: ./testing/smoke_tests.sh
-
-    miner-integration:
-        name: "Miner API: integration tests"
-        timeout-minutes: 30
-        runs-on: ubuntu-22.04
-        needs: [dep-install]
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-              with:
-                  submodules: "true"
-
-            - name: Run miner test
+            - name: Compilation
               run: |
-                  cd testing
-                  rustup target add wasm32-unknown-unknown
-                  cargo test miner_test
+                cd testing
+                rustup target add wasm32-unknown-unknown
+                cargo build
+
+            - name: Test-Account
+              run: cd testing && cargo test account -- --nocapture
+
+            - name: Test-Address
+              run: cd testing && cargo test address -- --nocapture
+
+            - name: Test-Send
+              run: cd testing && cargo test send_test -- --nocapture
+
+            - name: Test-BigInts
+              run: cd testing && cargo test bigints_test -- --nocapture
+
+            - name: Test-Leb128
+              run: cd testing && cargo test leb128 -- --nocapture
+
+            - name: Test-Deserialize
+              run: cd testing && cargo test deserialize_params_tests -- --nocapture
+
+            - name: Test-MarketCbor
+              run: cd testing && cargo test market_cbor_tests -- --nocapture
+
+            - name: Test-CborDecode
+              run: cd testing && cargo test cbor_decode_test -- --nocapture
+
+            - name: Test-FRC0042
+              run: cd testing  && cargo run --example methodnum
+
+            - name: Test-VerifReg
+              run: cd testing && cargo test verifreg_test -- --nocapture
+
+            - name: Test-Power
+              run: cd testing && cargo test power_test -- --nocapture
+
+            - name: Test-Miner
+              run: cd testing && cargo test miner_test -- --nocapture
+
+            - name: Test-Market
+              run: cd testing && cargo test market_test -- --nocapture
+
+            - name: Test-SolcVersions
+              run: chmod +x ./testing/smoke_tests.sh && ./testing/smoke_tests.sh
